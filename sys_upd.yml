@@ -1,0 +1,27 @@
+---
+- name: Ensure all hosts are up to date
+  hosts: all
+  become: true  # Required for package updates
+
+  tasks:
+    - name: Update package cache (apt)
+      apt:
+        update_cache: yes
+      when: ansible_pkg_mgr == "apt"  # Check if the package manager is apt
+
+    - name: Update package cache (yum)
+      yum:
+        update_cache: yes
+      when: ansible_pkg_mgr == "yum"  # Check if the package manager is yum
+
+    - name: Update packages (apt)
+      apt:
+        upgrade: dist
+        autoremove: yes
+      when: ansible_pkg_mgr == "apt"
+
+    - name: Update packages (yum)
+      yum:
+        name: '*'
+        state: latest
+      when: ansible_pkg_mgr == "yum"
